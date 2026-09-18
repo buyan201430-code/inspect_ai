@@ -222,9 +222,12 @@ def bash_session(
             "idle_timeout": DEFAULT_IDLE_TIME,
             "max_output_bytes": SandboxEnvironmentLimits.MAX_EXEC_OUTPUT_SIZE,
         }
+        # "type_submit" with no input submits a bare newline: an f-string here
+        # would send the literal text "None" to the shell.
+        submit_input = f"{input}\n" if input is not None else "\n"
         action_specific: dict[str, dict[str, object]] = {
             "type": {"input": input, **timing},
-            "type_submit": {"input": f"{input}\n", **timing},
+            "type_submit": {"input": submit_input, **timing},
             "interrupt": {"input": "\u0003", **timing},
             "read": timing,
             "restart": {"restart": True},
